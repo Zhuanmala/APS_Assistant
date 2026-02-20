@@ -1,6 +1,6 @@
 /* ── Login Gate ── */
 (function initLogin() {
-  const PASS_HASH = "24abd4b607a1015f206eba0dd53400f30131f88b2728104ec4b94e1427f56b64";
+  const PASS_HASH = "4c6052712ab570a88c03e2298528d705d6382224d9d4ccdd75c5c96a7fbc4cbf";
   const SESSION_KEY = "aps_logged_in";
 
   async function sha256(text) {
