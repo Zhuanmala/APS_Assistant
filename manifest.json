@@ -1,0 +1,10 @@
+{
+  "name": "APS陪练助手",
+  "short_name": "APS助手",
+  "description": "APS面谈语音陪练 + 材料雷达 + 复盘作战卡",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f4f7fb",
+  "theme_color": "#2563eb",
+  "icons": []
+}

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="theme-color" content="#2563eb" />
+  <link rel="manifest" href="manifest.json" />
+  <title>APS陪练MVP</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="header">
+    <div>
+      <h1>APS陪练助手（MVP）</h1>
+      <p>20分钟完成：路径诊断 → 模拟面谈 → 材料雷达 → 作战卡</p>
+    </div>
+    <div class="badge">Beta</div>
+  </header>
+
+  <main class="container">
+    <nav class="steps">
+      <button class="step active" data-step="1">1. 路径诊断</button>
+      <button class="step" data-step="2">2. 模拟面谈</button>
+      <button class="step" data-step="3">3. 材料雷达</button>
+      <button class="step" data-step="4">4. 复盘作战卡</button>
+    </nav>
+
+    <section class="panel" id="step-1">
+      <h2>资格与路径诊断</h2>
+      <p class="hint">根据你的背景生成 Interview/TestAS 建议与风险提示（MVP规则版）。</p>
+
+      <div class="grid">
+        <label>当前身份
+          <select id="status">
+            <option value="in_study">本科在读</option>
+            <option value="graduated">已毕业（本科/硕士）</option>
+          </select>
+        </label>
+
+        <label>当前学期
+          <input id="semester" type="number" min="1" max="12" value="6" />
+        </label>
+
+        <label>院校类型
+          <select id="uniType">
+            <option value="211">211/双一流</option>
+            <option value="non211">非211</option>
+          </select>
+        </label>
+
+        <label>学历背景
+          <select id="educationType">
+            <option value="bachelor">普通本科</option>
+            <option value="junior">专科（Junior College）</option>
+          </select>
+        </label>
+
+        <label>是否有APS面谈失败经历
+          <select id="failedBefore">
+            <option value="no">否</option>
+            <option value="yes">是</option>
+          </select>
+        </label>
+
+        <label>目标地区
+          <select id="targetCountry">
+            <option value="germany">德国</option>
+            <option value="other">其他</option>
+          </select>
+        </label>
+      </div>
+
+      <button id="runDiagnosis" class="primary">生成路径建议</button>
+
+      <div id="diagnosisResult" class="result hidden"></div>
+    </section>
+
+    <section class="panel hidden" id="step-2">
+      <h2>APS模拟面谈</h2>
+      <p class="hint">按课程真实性与专业解释能力打分；题目会根据你的薄弱项自适应切换。</p>
+
+      <div class="grid">
+        <label>面谈语言
+          <select id="interviewLanguage">
+            <option value="zh-en">中文理解 + 英文表达</option>
+            <option value="en">全英文</option>
+            <option value="de">全德文（提示用中文）</option>
+          </select>
+        </label>
+
+        <label>专业方向
+          <select id="majorField">
+            <option value="engineering">工科</option>
+            <option value="cs">计算机</option>
+            <option value="business">商科</option>
+            <option value="social">人文社科</option>
+            <option value="design">设计类</option>
+          </select>
+        </label>
+
+        <label>你上过的核心科目（可勾选多个）
+          <div id="subjectChecklist" class="subject-checklist"></div>
+        </label>
+      </div>
+      <p class="hint">提示：建议至少勾选3门与你申请方向最相关的课程。</p>
+
+      <div class="result">
+        <h4>Gemini教练配置</h4>
+        <div class="grid">
+          <label>Gemini API Key
+            <input id="geminiApiKey" type="password" placeholder="粘贴你的API Key（仅保存在当前浏览器）" />
+          </label>
+          <label>模型
+            <select id="geminiModel">
+              <option value="gemini-3.1-pro">gemini-3.1-pro</option>
+              <option value="gemini-2.5-flash">gemini-2.5-flash</option>
+              <option value="gemini-2.5-pro">gemini-2.5-pro</option>
+              <option value="gemini-1.5-flash">gemini-1.5-flash</option>
+            </select>
+          </label>
+        </div>
+        <div class="control-row">
+          <button id="saveGeminiConfig" class="secondary" type="button">保存配置</button>
+          <button id="testGemini" class="secondary" type="button">测试连通</button>
+        </div>
+        <p id="geminiStatus" class="hint">Gemini状态：未配置（将使用本地规则兜底）</p>
+      </div>
+
+      <button id="startInterview" class="primary">开始10题模拟</button>
+
+      <div id="interviewBox" class="hidden">
+        <div class="question-meta">
+          <span id="qProgress">第1/10题</span>
+          <span id="qDimension" class="tag"></span>
+          <span id="qScore" class="tag neutral">当前得分：0</span>
+        </div>
+        <h3 id="questionText"></h3>
+        <div class="control-row">
+          <button id="readQuestion" class="secondary" type="button">🔊 朗读题目</button>
+          <button id="startVoice" class="secondary" type="button">🎤 开始语音回答</button>
+          <button id="stopVoice" class="secondary" type="button">⏹ 停止录音</button>
+          <button id="submitVoice" class="secondary" type="button">✅ 提交语音答案</button>
+        </div>
+        <p id="speechStatus" class="hint">语音状态：未开始（建议使用Chrome/Edge）</p>
+        <textarea id="answerInput" rows="6" placeholder="请输入你的回答（建议60字以上）..."></textarea>
+        <div class="control-row">
+          <button id="submitAnswer" class="primary">提交本题</button>
+          <button id="fillTemplate" class="secondary" type="button">🧭 一键填入作答模板</button>
+        </div>
+        <div id="feedback" class="feedback hidden"></div>
+        <div id="coachPanel" class="result hidden"></div>
+        <div class="result">
+          <h4>本轮已保存记录</h4>
+          <div id="liveRecords" class="records-list hint">暂无记录</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel hidden" id="step-3">
+      <h2>材料雷达</h2>
+      <p class="hint">根据你的路径自动生成材料清单，勾选后输出缺失风险。</p>
+      <div id="docChecklist"></div>
+      <button id="runRadar" class="primary">生成材料风险</button>
+      <div id="radarResult" class="result hidden"></div>
+    </section>
+
+    <section class="panel hidden" id="step-4">
+      <h2>APS个人作战卡</h2>
+      <div id="battleCard" class="result"></div>
+      <div class="control-row">
+        <button id="exportPdf" class="primary">导出PDF复盘</button>
+        <button id="resetAll" class="secondary">重新开始</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>规则说明：本MVP基于APS官网公开流程做训练演示，最终以官方最新通知为准。</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
