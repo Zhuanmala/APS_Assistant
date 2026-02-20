@@ -27,7 +27,7 @@ body {
   line-height: 1.5;
 }
 
-/* ©¤©¤ Login Gate ©¤©¤ */
+/* ï¿½ï¿½ï¿½ï¿½ Login Gate ï¿½ï¿½ï¿½ï¿½ */
 .login-gate {
   position: fixed;
   inset: 0;
@@ -98,7 +98,7 @@ body {
   transform: scale(0.98);
 }
 
-/* ©¤©¤ Main Layout ©¤©¤ */
+/* ï¿½ï¿½ï¿½ï¿½ Main Layout ï¿½ï¿½ï¿½ï¿½ */
 .header {
   display: flex;
   justify-content: space-between;
@@ -139,7 +139,7 @@ body {
   padding: 0 20px 40px;
 }
 
-/* ©¤©¤ Navigation Steps ©¤©¤ */
+/* ï¿½ï¿½ï¿½ï¿½ Navigation Steps ï¿½ï¿½ï¿½ï¿½ */
 .steps {
   display: flex;
   background: white;
@@ -178,7 +178,7 @@ body {
   box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
 }
 
-/* ©¤©¤ Content Panels ©¤©¤ */
+/* ï¿½ï¿½ï¿½ï¿½ Content Panels ï¿½ï¿½ï¿½ï¿½ */
 .panel {
   background: white;
   border-radius: 24px;
@@ -200,7 +200,7 @@ body {
   line-height: 1.6;
 }
 
-/* ©¤©¤ Grid & Forms ©¤©¤ */
+/* ï¿½ï¿½ï¿½ï¿½ Grid & Forms ï¿½ï¿½ï¿½ï¿½ */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -227,6 +227,9 @@ textarea {
   color: var(--text);
   background: #fff;
   transition: border-color 0.2s;
+}
+
+select {
   appearance: none;
 }
 
@@ -252,7 +255,7 @@ textarea {
   line-height: 1.6;
 }
 
-/* ©¤©¤ Subject Checklist ©¤©¤ */
+/* ï¿½ï¿½ï¿½ï¿½ Subject Checklist ï¿½ï¿½ï¿½ï¿½ */
 .subject-checklist {
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -279,10 +282,16 @@ textarea {
   width: 18px;
   height: 18px;
   margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
   accent-color: var(--primary);
+  appearance: checkbox;
+  -webkit-appearance: checkbox;
 }
 
-/* ©¤©¤ Buttons ©¤©¤ */
+/* ï¿½ï¿½ï¿½ï¿½ Buttons ï¿½ï¿½ï¿½ï¿½ */
 button {
   border: none;
   border-radius: 12px;
@@ -329,7 +338,7 @@ button:active {
   margin-bottom: 24px;
 }
 
-/* ©¤©¤ Results & Feedback ©¤©¤ */
+/* ï¿½ï¿½ï¿½ï¿½ Results & Feedback ï¿½ï¿½ï¿½ï¿½ */
 .result {
   margin-top: 24px;
   border: 1px solid var(--border);
@@ -374,7 +383,7 @@ button:active {
   color: #166534;
 }
 
-/* ©¤©¤ Helper Classes ©¤©¤ */
+/* ï¿½ï¿½ï¿½ï¿½ Helper Classes ï¿½ï¿½ï¿½ï¿½ */
 .hidden {
   display: none !important;
 }
