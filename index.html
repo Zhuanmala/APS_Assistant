@@ -11,6 +11,18 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <!-- Login Gate -->
+  <div id="loginGate" class="login-gate">
+    <div class="login-card">
+      <h2>🔒 APS陪练助手</h2>
+      <p>请输入访问密码</p>
+      <input id="loginPassword" type="password" placeholder="输入密码" autocomplete="current-password" />
+      <button id="loginBtn" class="primary">登 录</button>
+      <p id="loginError" class="hint" style="color:var(--danger);display:none">密码错误，请重试</p>
+    </div>
+  </div>
+
+  <div id="appContent" style="display:none">
   <header class="header">
     <div>
       <h1>APS陪练助手（MVP）</h1>
@@ -163,6 +175,7 @@
   <footer class="footer">
     <p>规则说明：本MVP基于APS官网公开流程做训练演示，最终以官方最新通知为准。</p>
   </footer>
+  </div><!-- end appContent -->
 
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script src="app.js"></script>

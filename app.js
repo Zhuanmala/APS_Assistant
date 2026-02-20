@@ -1,3 +1,38 @@
+/* ── Login Gate ── */
+(function initLogin() {
+  const PASS_HASH = "24abd4b607a1015f206eba0dd53400f30131f88b2728104ec4b94e1427f56b64";
+  const SESSION_KEY = "aps_logged_in";
+
+  async function sha256(text) {
+    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
+  }
+
+  function showApp() {
+    document.getElementById("loginGate").style.display = "none";
+    document.getElementById("appContent").style.display = "";
+  }
+
+  if (sessionStorage.getItem(SESSION_KEY) === "1") {
+    showApp();
+  }
+
+  document.getElementById("loginBtn").addEventListener("click", async () => {
+    const pwd = document.getElementById("loginPassword").value;
+    const hash = await sha256(pwd);
+    if (hash === PASS_HASH) {
+      sessionStorage.setItem(SESSION_KEY, "1");
+      showApp();
+    } else {
+      document.getElementById("loginError").style.display = "";
+    }
+  });
+
+  document.getElementById("loginPassword").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") document.getElementById("loginBtn").click();
+  });
+})();
+
 const state = {
   diagnosis: null,
   currentSessionId: null,
