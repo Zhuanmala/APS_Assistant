@@ -255,7 +255,7 @@ textarea {
   line-height: 1.6;
 }
 
-/* ���� Subject Checklist ���� */
+/* Subject Checklist */
 .subject-checklist {
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -265,33 +265,63 @@ textarea {
   background: #f8fafc;
 }
 
+.subject-checklist input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
 .subject-checklist label {
   flex-direction: row;
   align-items: center;
-  padding: 8px 12px;
+  padding: 8px 12px 8px 36px;
   border-radius: 8px;
   cursor: pointer;
   transition: background 0.1s;
+  position: relative;
 }
 
 .subject-checklist label:hover {
   background: white;
 }
 
-.subject-checklist input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  margin: 0;
-  padding: 0;
-  border: none;
-  border-radius: 0;
-  background: none;
-  accent-color: var(--primary);
-  appearance: checkbox;
-  -webkit-appearance: checkbox;
+.subject-checklist label::before {
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  border: 2px solid #cbd5e1;
+  border-radius: 5px;
+  background: #fff;
+  transition: all 0.15s;
 }
 
-/* ���� Buttons ���� */
+.subject-checklist input[type="checkbox"]:checked + span {
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.subject-checklist label:has(input:checked)::before {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.subject-checklist label:has(input:checked)::after {
+  content: "";
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-60%) rotate(45deg);
+  width: 6px;
+  height: 11px;
+  border: solid #fff;
+  border-width: 0 2.5px 2.5px 0;
+}
+
 button {
   border: none;
   border-radius: 12px;
