@@ -284,6 +284,52 @@ async function fetchAvailableGeminiModels() {
     .filter(Boolean);
 }
 
+/* 模型优先级：越靠前越优先 */
+const MODEL_PREFERENCE = [
+  "gemini-2.5-flash",
+  "gemini-2.5-pro",
+  "gemini-2.0-flash",
+  "gemini-1.5-pro",
+  "gemini-1.5-flash",
+];
+
+async function autoSelectBestModel() {
+  if (!state.llm.apiKey) return;
+
+  const statusEl = document.getElementById("modelStatus");
+  const setStatus = (msg) => { if (statusEl) statusEl.textContent = msg; };
+
+  setStatus("正在检测可用模型...");
+
+  const available = await fetchAvailableGeminiModels();
+  if (!available.length) {
+    setStatus("无法获取模型列表，将使用默认模型");
+    return;
+  }
+
+  /* 按优先级匹配 */
+  let bestModel = "";
+  for (const preferred of MODEL_PREFERENCE) {
+    if (available.includes(preferred)) {
+      bestModel = preferred;
+      break;
+    }
+  }
+
+  /* 如果优先列表都不在，取 available 中包含 gemini 的第一个 */
+  if (!bestModel) {
+    bestModel = available.find((m) => m.includes("gemini")) || available[0];
+  }
+
+  if (bestModel) {
+    state.llm.model = bestModel;
+    localStorage.setItem("aps_gemini_model", bestModel);
+    setStatus(`已自动选择：${bestModel}`);
+  } else {
+    setStatus("未找到可用模型");
+  }
+}
+
 async function callGeminiWithFallback(prompt) {
   try {
     return await callGemini(prompt);
@@ -293,11 +339,18 @@ async function callGeminiWithFallback(prompt) {
       throw error;
     }
 
-    const available = await fetchAvailableGeminiModels();
-    const recommend = available.length
-      ? `当前Key可用模型示例：${available.slice(0, 6).join("、")}`
-      : "未能拉取到可用模型列表，请检查Key权限或网络。";
-    throw new Error(`当前选择模型不可用：${state.llm.model}。${recommend}`);
+    /* 当前模型不可用，自动切换到最佳可用模型并重试一次 */
+    const statusEl = document.getElementById("modelStatus");
+    if (statusEl) statusEl.textContent = `${state.llm.model} 不可用，正在自动切换...`;
+
+    await autoSelectBestModel();
+
+    /* 如果切换后模型变了，重试一次 */
+    try {
+      return await callGemini(prompt);
+    } catch (retryError) {
+      throw new Error(`模型自动切换后仍然失败：${retryError.message}`);
+    }
   }
 }
 
@@ -943,6 +996,9 @@ document.getElementById("startInterview").addEventListener("click", async () => 
     alert("请先输入Gemini API Key再开始模拟。");
     return;
   }
+
+  /* 自动检测并选择最佳模型 */
+  await autoSelectBestModel();
 
   state.interview.language = document.getElementById("interviewLanguage").value;
   state.interview.major = document.getElementById("majorField").value;
