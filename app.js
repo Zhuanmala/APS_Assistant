@@ -3,10 +3,10 @@ const state = {
   currentSessionId: null,
   llm: {
     provider: "gemini",
-    enabled: true,
-    apiKey: "AIzaSyDniI3t91s5RSitbBQukmeLjmJO-kSas0k",
+    enabled: false,
+    apiKey: "",
     model: "gemini-2.5-flash",
-    lastStatus: "已就绪",
+    lastStatus: "未配置",
   },
   interview: {
     started: false,
@@ -152,11 +152,23 @@ function getSelectedSubjects() {
 }
 
 function restoreGeminiConfig() {
-  // API key and model are hardcoded in state
+  const savedKey = localStorage.getItem("aps_gemini_api_key") || "";
+  state.llm.apiKey = savedKey;
+  state.llm.enabled = Boolean(savedKey);
+  const keyInput = document.getElementById("geminiApiKey");
+  if (keyInput) keyInput.value = savedKey;
 }
 
 function saveGeminiConfig() {
-  // No-op: config is hardcoded
+  const keyInput = document.getElementById("geminiApiKey");
+  const apiKey = keyInput ? keyInput.value.trim() : state.llm.apiKey;
+  state.llm.apiKey = apiKey;
+  state.llm.enabled = Boolean(apiKey);
+  if (apiKey) {
+    localStorage.setItem("aps_gemini_api_key", apiKey);
+  } else {
+    localStorage.removeItem("aps_gemini_api_key");
+  }
 }
 
 async function callGemini(prompt) {
@@ -891,8 +903,9 @@ function interviewSummary() {
 }
 
 document.getElementById("startInterview").addEventListener("click", async () => {
+  saveGeminiConfig();
   if (!state.llm.enabled) {
-    alert("Gemini未启用，请检查配置。");
+    alert("请先输入Gemini API Key再开始模拟。");
     return;
   }
 
