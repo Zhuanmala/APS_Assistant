@@ -3,10 +3,10 @@ const state = {
   currentSessionId: null,
   llm: {
     provider: "gemini",
-    enabled: false,
-    apiKey: "",
-    model: "gemini-3.1-pro",
-    lastStatus: "未配置",
+    enabled: true,
+    apiKey: "AIzaSyDniI3t91s5RSitbBQukmeLjmJO-kSas0k",
+    model: "gemini-2.5-flash",
+    lastStatus: "已就绪",
   },
   interview: {
     started: false,
@@ -44,7 +44,6 @@ const GEMINI_MODEL_STORAGE = "aps_gemini_model";
 const speechStatusEl = document.getElementById("speechStatus");
 const answerInputEl = document.getElementById("answerInput");
 const questionTextEl = document.getElementById("questionText");
-const geminiStatusEl = document.getElementById("geminiStatus");
 
 const SUBJECT_LIBRARY = {
   engineering: [
@@ -122,9 +121,6 @@ function updateSpeechStatus(message) {
 
 function updateGeminiStatus(message) {
   state.llm.lastStatus = message;
-  if (geminiStatusEl) {
-    geminiStatusEl.textContent = `Gemini状态：${message}`;
-  }
 }
 
 function renderSubjectOptions(major, keepSelected = true) {
@@ -156,37 +152,11 @@ function getSelectedSubjects() {
 }
 
 function restoreGeminiConfig() {
-  const savedKey = localStorage.getItem(GEMINI_KEY_STORAGE) || "";
-  const savedModel = localStorage.getItem(GEMINI_MODEL_STORAGE) || "gemini-3.1-pro";
-  state.llm.apiKey = savedKey;
-  state.llm.model = savedModel;
-  state.llm.enabled = Boolean(savedKey);
-
-  const keyInput = document.getElementById("geminiApiKey");
-  const modelSelect = document.getElementById("geminiModel");
-  if (keyInput) keyInput.value = savedKey;
-  if (modelSelect) modelSelect.value = savedModel;
-
-  updateGeminiStatus(savedKey ? `已配置（${savedModel}）` : "未配置（将使用本地规则兜底）");
+  // API key and model are hardcoded in state
 }
 
 function saveGeminiConfig() {
-  const apiKey = document.getElementById("geminiApiKey")?.value?.trim() || "";
-  const model = document.getElementById("geminiModel")?.value || "gemini-3.1-pro";
-
-  state.llm.apiKey = apiKey;
-  state.llm.model = model;
-  state.llm.enabled = Boolean(apiKey);
-
-  if (apiKey) {
-    localStorage.setItem(GEMINI_KEY_STORAGE, apiKey);
-    localStorage.setItem(GEMINI_MODEL_STORAGE, model);
-    updateGeminiStatus(`已保存并启用（${model}，已锁定不自动切换）`);
-  } else {
-    localStorage.removeItem(GEMINI_KEY_STORAGE);
-    localStorage.setItem(GEMINI_MODEL_STORAGE, model);
-    updateGeminiStatus("未配置Key（将使用本地规则兜底）");
-  }
+  // No-op: config is hardcoded
 }
 
 async function callGemini(prompt) {
@@ -921,10 +891,8 @@ function interviewSummary() {
 }
 
 document.getElementById("startInterview").addEventListener("click", async () => {
-  saveGeminiConfig();
   if (!state.llm.enabled) {
-    alert("请先在“Gemini教练配置”中填写API Key并保存，再开始模拟。");
-    updateGeminiStatus("未配置，无法开始全Gemini模式");
+    alert("Gemini未启用，请检查配置。");
     return;
   }
 
@@ -1318,9 +1286,6 @@ document.getElementById("resetAll").addEventListener("click", () => {
 
   switchStep(1);
 });
-
-document.getElementById("saveGeminiConfig")?.addEventListener("click", saveGeminiConfig);
-document.getElementById("testGemini")?.addEventListener("click", testGeminiConnection);
 
 restoreGeminiConfig();
 renderSubjectOptions(document.getElementById("majorField")?.value || "engineering", false);
