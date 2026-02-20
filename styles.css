@@ -300,6 +300,10 @@ textarea {
   transition: all 0.15s;
 }
 
+.subject-checklist label:has(input:checked) {
+  background: #eff6ff;
+}
+
 .subject-checklist input[type="checkbox"]:checked + span {
   color: var(--primary);
   font-weight: 500;
